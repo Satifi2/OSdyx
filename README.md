@@ -1,2 +1,2 @@
-# OSdyx
-my own OS labs
+# OS
+This is a repository for operating system learning.
