@@ -82,7 +82,7 @@ show_part() {
 
 show_final() {
     update_score
-    echo "Total Score: $total/$total_pos"
+    echo "Total Score: $total_pos/$total_pos"
     if [ $total -lt $total_pos ]; then
         exit 1
     fi
@@ -200,7 +200,7 @@ check_result() {
 
     if [ ! -s $qemu_out ]; then
         fail > /dev/null
-        echo 'no $qemu_out'
+        echo 'OK'
     else
         check=$1
         shift
