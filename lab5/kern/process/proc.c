@@ -215,7 +215,7 @@ proc_run(struct proc_struct *proc) {
         switch_to(&(prev->context), &(next->context));
 
         local_intr_restore(intr_flag);
-       
+        
     }
 }
 
@@ -331,7 +331,6 @@ copy_mm(uint32_t clone_flags, struct proc_struct *proc) {
         ret = dup_mmap(mm, oldmm);
     }
     unlock_mm(oldmm);
-
     if (ret != 0) {
         goto bad_dup_cleanup_mmap;
     }
@@ -425,8 +424,9 @@ do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf) {
     
     proc->pid = get_pid();
     hash_proc(proc);
-    list_add(&proc_list, &(proc->list_link));
-    nr_process++;
+    // list_add(&proc_list, &(proc->list_link));
+    // nr_process++;
+    set_links(proc);
 
     local_intr_restore(intr_flag);
 
@@ -634,7 +634,11 @@ load_icode(unsigned char *binary, size_t size) {
      *          tf->status should be appropriate for user program (the value of sstatus)
      *          hint: check meaning of SPP, SPIE in SSTATUS, use them by SSTATUS_SPP, SSTATUS_SPIE(defined in risv.h)
      */
-
+    tf->gpr.sp = USTACKTOP;
+    tf->epc = elf->e_entry;
+    // Set SPP to 0 so that we return to user mode
+    // Set SPIE to 1 so that we can handle interrupts
+    tf->status = (sstatus & ~SSTATUS_SPP) | SSTATUS_SPIE;
 
     ret = 0;
 out:
